@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ایتا‌فرست">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/Eitaa_pwa/manifest.json">
 <title>ایتا‌فرست</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600&display=swap');
@@ -645,35 +645,31 @@ async function summarize() {
   btn.disabled = true;
 
   try {
-    let res;
-    try {
-      res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + s.groqKey,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          max_tokens: 1024,
-          messages: [
-            {
-              role: 'system',
-              content: 'تو یک دستیار خلاصه‌سازی متن فارسی هستی. وظیفه‌ات اینه که متن ورودی را خلاصه کنی، فقط اصل مطلب را نگه داری و حاشیه‌ها، استیکرها، لینک‌های تبلیغاتی اضافی، و عبارات بی‌ربط را حذف کنی. خروجی فقط متن ساده فارسی بدون هیچ توضیح اضافه باشد.'
-            },
-            { role: 'user', content: text }
-          ]
-        })
-      });
-    } catch(networkErr) {
-      throw new Error('اتصال به Groq ناموفق بود — اینترنت یا VPN را بررسی کن');
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + s.groqKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'system',
+            content: 'تو یک دستیار خلاصه‌سازی متن فارسی هستی. وظیفه‌ات اینه که متن ورودی را خلاصه کنی، فقط اصل مطلب را نگه داری و حاشیه‌ها، استیکرها، لینک‌های تبلیغاتی اضافی، و عبارات بی‌ربط را حذف کنی. خروجی فقط متن ساده فارسی بدون هیچ توضیح اضافه باشد.'
+          },
+          { role: 'user', content: text }
+        ]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'خطای API');
     }
 
     const data = await res.json();
-    if (!res.ok) {
-      throw new Error('Groq: ' + (data.error?.message || `کد خطا ${res.status}`));
-    }
-
     const summary = data.choices[0].message.content.trim();
     pendingText = summary + (s.eitaaLink ? '\n\n' + s.eitaaLink : '');
 
@@ -721,28 +717,11 @@ async function sendToEitaa() {
   btn.disabled = true;
 
   try {
-    let res;
-    try {
-      res = await fetch(`https://eitaayar.ir/api/${s.eitaaToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: s.eitaaChatId, text: pendingText })
-      });
-    } catch(networkErr) {
-      // CORS یا مشکل شبکه — از روش فرم‌دیتا امتحان کن
-      const formData = new FormData();
-      formData.append('chat_id', s.eitaaChatId);
-      formData.append('text', pendingText);
-      try {
-        res = await fetch(`https://eitaayar.ir/api/${s.eitaaToken}/sendMessage`, {
-          method: 'POST',
-          body: formData
-        });
-      } catch(e2) {
-        throw new Error('اتصال به ایتایار ناموفق بود — اینترنت را بررسی کن');
-      }
-    }
-
+    const res = await fetch(`https://eitaayar.ir/api/${s.eitaaToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: s.eitaaChatId, text: pendingText })
+    });
     const data = await res.json();
     if (data.ok) {
       showToast('پیام در کانال ایتا ارسال شد ✓', 'success');
@@ -752,11 +731,11 @@ async function sendToEitaa() {
       $('copyBtn').disabled = true;
       btn.disabled = true;
     } else {
-      showToast('ارسال ناموفق: ' + (data.description || 'توکن یا شناسه کانال را بررسی کن'), 'error');
+      showToast('ارسال ناموفق — توکن یا شناسه کانال را بررسی کن', 'error');
       btn.disabled = false;
     }
   } catch(e) {
-    showToast(e.message || 'خطا در اتصال به ایتایار', 'error');
+    showToast('خطا در اتصال به ایتایار', 'error');
     btn.disabled = false;
   } finally {
     $('sendBtnText').textContent = 'ارسال به کانال ایتا';
@@ -768,7 +747,7 @@ updateStatusDot();
 
 // PWA install
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.register('/Eitaa_pwa/sw.js', {scope: '/Eitaa_pwa/'}).catch(() => {});
 }
 </script>
 </body>
