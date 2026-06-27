@@ -1,5 +1,10 @@
-const CACHE = 'eitaafirst-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'eitaafirst-v2';
+const GHPATH = '/Eitaa_pwa';
+const ASSETS = [
+  `${GHPATH}/`,
+  `${GHPATH}/index.html`,
+  `${GHPATH}/manifest.json`
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
