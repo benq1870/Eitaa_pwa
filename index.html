@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ایتا‌فرست">
+<link rel="manifest" href="manifest.json">
+<title>ایتا‌فرست</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f1a;
+    --surface: #1a1a2e;
+    --surface2: #22223b;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e8e8f0;
+    --text2: #9999bb;
+    --accent: #7c6af7;
+    --accent2: #5e4fd6;
+    --green: #4ade80;
+    --red: #f87171;
+    --amber: #fbbf24;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px 32px;
+  }
+
+  /* Header */
+  .header {
+    padding: 20px 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .header-title span { color: var(--accent); }
+  .settings-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s;
+  }
+  .settings-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 12px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    direction: rtl;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text2); opacity: 0.6; }
+
+  /* Input */
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 14px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    direction: ltr;
+    text-align: left;
+  }
+  input:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--text2); opacity: 0.6; }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--border2); }
+
+  .btn-send {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: #fff;
+    margin-top: 8px;
+  }
+  .btn-send:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-send:disabled { opacity: 0.45; cursor: not-allowed; transform: none; filter: none; }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+
+  /* Preview */
+  .preview-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    direction: rtl;
+    min-height: 80px;
+  }
+  .preview-placeholder { color: var(--text2); font-style: italic; }
+
+  /* Char count */
+  .char-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .char-count { font-size: 12px; color: var(--text2); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 40px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+    white-space: nowrap;
+    max-width: 90vw;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--green); color: var(--green); }
+  .toast.error { border-color: var(--red); color: var(--red); }
+  .toast.warning { border-color: var(--amber); color: var(--amber); }
+
+  /* Modal (Settings) */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .field-group { margin-bottom: 14px; }
+  .field-label {
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .field-hint {
+    font-size: 11px;
+    color: var(--text2);
+    opacity: 0.7;
+    margin-top: 4px;
+    direction: rtl;
+  }
+  .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+
+  /* Status dot */
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 6px;
+  }
+  .dot-ok { background: var(--green); }
+  .dot-warn { background: var(--amber); }
+  .dot-err { background: var(--red); }
+
+  .config-status {
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">ایتا<span>فرست</span></div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="config-status" id="configStatus">
+        <span class="status-dot dot-err" id="statusDot"></span>
+        <span id="statusText">تنظیم نشده</span>
+      </div>
+      <button class="settings-btn" onclick="openSettings()" title="تنظیمات">⚙</button>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="card">
+    <div class="card-label">متن ورودی</div>
+    <textarea id="inputText" rows="6" placeholder="متن طولانی یا پیام با حاشیه‌های اضافی را اینجا بنویس..."></textarea>
+    <div class="char-row">
+      <span class="char-count" id="charCount">۰ کاراکتر</span>
+      <button class="btn btn-secondary" style="width:auto;padding:5px 12px;font-size:13px;" onclick="clearInput()">پاک کردن</button>
+    </div>
+    <div style="margin-top:10px;">
+      <button class="btn btn-primary" id="summarizeBtn" onclick="summarize()">
+        <span id="summarizeBtnText">خلاصه‌سازی با هوش مصنوعی</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="card">
+    <div class="card-label">پیش‌نمایش خروجی</div>
+    <div class="preview-box" id="previewBox">
+      <span class="preview-placeholder">خروجی خلاصه‌سازی اینجا نمایش داده می‌شود...</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="editPreview()" id="editBtn" disabled>ویرایش</button>
+      <button class="btn btn-secondary" onclick="copyPreview()" id="copyBtn" disabled>کپی</button>
+    </div>
+    <button class="btn btn-send" id="sendBtn" onclick="sendToEitaa()" disabled>
+      <span id="sendBtnText">ارسال به کانال ایتا</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeOnOutside(event)">
+  <div class="modal">
+    <div class="modal-title">⚙ تنظیمات</div>
+
+    <div class="field-group">
+      <div class="field-label">کلید API گروک (Groq)</div>
+      <input type="password" id="groqKey" placeholder="gsk_...">
+      <div class="field-hint">از console.groq.com رایگان بگیر</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field-group">
+      <div class="field-label">توکن ایتایار</div>
+      <input type="password" id="eitaaToken" placeholder="توکن دریافتی از eitaayar.ir">
+    </div>
+    <div class="field-group">
+      <div class="field-label">شناسه کانال</div>
+      <input type="text" id="eitaaChatId" placeholder="username یا ID عددی کانال">
+      <div class="field-hint" style="direction:rtl">مثال: mychannel یا 1404</div>
+    </div>
+    <div class="field-group">
+      <div class="field-label">لینک کانال (انتهای هر پیام)</div>
+      <input type="text" id="eitaaLink" placeholder="https://eitaa.com/mychannel">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeSettings()">لغو</button>
+      <button class="btn btn-primary" onclick="saveSettings()">ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ── Storage ──────────────────────────────────────────────
+function loadSettings() {
+  return {
+    groqKey: localStorage.getItem('groqKey') || '',
+    eitaaToken: localStorage.getItem('eitaaToken') || '',
+    eitaaChatId: localStorage.getItem('eitaaChatId') || '',
+    eitaaLink: localStorage.getItem('eitaaLink') || '',
+  };
+}
+function saveSettings() {
+  localStorage.setItem('groqKey', $('groqKey').value.trim());
+  localStorage.setItem('eitaaToken', $('eitaaToken').value.trim());
+  localStorage.setItem('eitaaChatId', $('eitaaChatId').value.trim());
+  localStorage.setItem('eitaaLink', $('eitaaLink').value.trim());
+  closeSettings();
+  updateStatusDot();
+  showToast('تنظیمات ذخیره شد', 'success');
+}
+
+// ── Status dot ────────────────────────────────────────────
+function updateStatusDot() {
+  const s = loadSettings();
+  const ok = s.groqKey && s.eitaaToken && s.eitaaChatId;
+  $('statusDot').className = 'status-dot ' + (ok ? 'dot-ok' : 'dot-err');
+  $('statusText').textContent = ok ? 'آماده' : 'تنظیم نشده';
+}
+
+// ── Toast ─────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ── Settings modal ────────────────────────────────────────
+function openSettings() {
+  const s = loadSettings();
+  $('groqKey').value = s.groqKey;
+  $('eitaaToken').value = s.eitaaToken;
+  $('eitaaChatId').value = s.eitaaChatId;
+  $('eitaaLink').value = s.eitaaLink;
+  $('modalOverlay').classList.add('open');
+}
+function closeSettings() { $('modalOverlay').classList.remove('open'); }
+function closeOnOutside(e) { if (e.target === $('modalOverlay')) closeSettings(); }
+
+// ── Char count ────────────────────────────────────────────
+$('inputText').addEventListener('input', function() {
+  $('charCount').textContent = this.value.length.toLocaleString('fa') + ' کاراکتر';
+});
+
+function clearInput() {
+  $('inputText').value = '';
+  $('charCount').textContent = '۰ کاراکتر';
+}
+
+// ── Summarize ─────────────────────────────────────────────
+let pendingText = '';
+
+async function summarize() {
+  const text = $('inputText').value.trim();
+  if (!text || text.length < 20) { showToast('متن کوتاه‌تر از حد لازم است', 'warning'); return; }
+
+  const s = loadSettings();
+  if (!s.groqKey) { showToast('ابتدا کلید Groq را در تنظیمات وارد کن', 'error'); openSettings(); return; }
+
+  const btn = $('summarizeBtn');
+  $('summarizeBtnText').innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + s.groqKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'system',
+            content: 'تو یک دستیار خلاصه‌سازی متن فارسی هستی. وظیفه‌ات اینه که متن ورودی را خلاصه کنی، فقط اصل مطلب را نگه داری و حاشیه‌ها، استیکرها، لینک‌های تبلیغاتی اضافی، و عبارات بی‌ربط را حذف کنی. خروجی فقط متن ساده فارسی بدون هیچ توضیح اضافه باشد.'
+          },
+          { role: 'user', content: text }
+        ]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'خطای API');
+    }
+
+    const data = await res.json();
+    const summary = data.choices[0].message.content.trim();
+    pendingText = summary + (s.eitaaLink ? '\n\n' + s.eitaaLink : '');
+
+    $('previewBox').textContent = pendingText;
+    $('editBtn').disabled = false;
+    $('copyBtn').disabled = false;
+    $('sendBtn').disabled = false;
+    showToast('خلاصه‌سازی انجام شد ✓', 'success');
+
+  } catch(e) {
+    showToast('خطا: ' + e.message, 'error');
+  } finally {
+    $('summarizeBtnText').textContent = 'خلاصه‌سازی با هوش مصنوعی';
+    btn.disabled = false;
+  }
+}
+
+// ── Edit preview ──────────────────────────────────────────
+function editPreview() {
+  const box = $('previewBox');
+  const ta = document.createElement('textarea');
+  ta.value = pendingText;
+  ta.rows = 8;
+  ta.style.cssText = 'width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:Vazirmatn,sans-serif;font-size:14px;line-height:1.8;resize:vertical;direction:rtl;';
+  ta.oninput = () => { pendingText = ta.value; };
+  box.innerHTML = '';
+  box.style.padding = '0';
+  box.appendChild(ta);
+  ta.focus();
+}
+
+function copyPreview() {
+  if (!pendingText) return;
+  navigator.clipboard.writeText(pendingText).then(() => showToast('کپی شد', 'success'));
+}
+
+// ── Send to Eitaa ─────────────────────────────────────────
+async function sendToEitaa() {
+  const s = loadSettings();
+  if (!s.eitaaToken || !s.eitaaChatId) { showToast('توکن یا شناسه کانال وارد نشده', 'error'); openSettings(); return; }
+  if (!pendingText) { showToast('ابتدا متن را خلاصه‌سازی کن', 'warning'); return; }
+
+  const btn = $('sendBtn');
+  $('sendBtnText').innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`https://eitaayar.ir/api/${s.eitaaToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: s.eitaaChatId, text: pendingText })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast('پیام در کانال ایتا ارسال شد ✓', 'success');
+      pendingText = '';
+      $('previewBox').innerHTML = '<span class="preview-placeholder">خروجی خلاصه‌سازی اینجا نمایش داده می‌شود...</span>';
+      $('editBtn').disabled = true;
+      $('copyBtn').disabled = true;
+      btn.disabled = true;
+    } else {
+      showToast('ارسال ناموفق — توکن یا شناسه کانال را بررسی کن', 'error');
+      btn.disabled = false;
+    }
+  } catch(e) {
+    showToast('خطا در اتصال به ایتایار', 'error');
+    btn.disabled = false;
+  } finally {
+    $('sendBtnText').textContent = 'ارسال به کانال ایتا';
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────
+updateStatusDot();
+
+// PWA install
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
