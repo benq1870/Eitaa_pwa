@@ -2,7 +2,8 @@
   "name": "ایتافرست",
   "short_name": "ایتافرست",
   "description": "خلاصه‌سازی و ارسال به کانال ایتا",
-  "start_url": "/",
+  "start_url": "/Eitaa_pwa/",
+  "scope": "/Eitaa_pwa/",
   "display": "standalone",
   "background_color": "#0f0f1a",
   "theme_color": "#1a1a2e",
@@ -11,13 +12,13 @@
   "dir": "rtl",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/Eitaa_pwa/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "/Eitaa_pwa/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
